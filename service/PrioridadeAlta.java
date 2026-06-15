@@ -1,3 +1,5 @@
+package service;
+
 public class PrioridadeAlta extends CalculadoraPrioridade {
 
     @Override

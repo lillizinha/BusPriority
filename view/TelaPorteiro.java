@@ -1,5 +1,8 @@
+package view;
+
 import javax.swing.*;
 import java.awt.event.*;
+import service.SistemaAutorizacoes;
 
 public class TelaPorteiro extends JFrame {
 
