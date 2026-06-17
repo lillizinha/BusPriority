@@ -7,6 +7,8 @@ import service.AlunoService;
 import service.SistemaAutorizacoes;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 
 public class TelaAluno extends JFrame {
@@ -209,14 +211,63 @@ private void solicitarSaida() {
             Autorizacao aut = alunoService.criarAutorizacao();
             codigoGerado = aut.getCodigo();
             aluno.setCodigoAutorizacao(codigoGerado);
-            SistemaAutorizacoes.adicionarCodigo(codigoGerado);
+            SistemaAutorizacoes.adicionarCodigo(codigoGerado, aluno.getPrioridade());
 
-            areaResultado.append(
-                    "\n\n===== AUTORIZAÇÃO ====="
-                            + "\nCódigo gerado: "
-                            + codigoGerado
-                            + "\n\nApresente este código ao porteiro."
-            );
+                        areaResultado.append(
+                                        "\n\n AUTORIZAÇÃO "
+                                                        + "\nCódigo gerado: "
+                                                        + codigoGerado
+                                                        + "\n\nApresente este código ao porteiro e aguarde :)."
+                        );
+
+                        // Mostrar diálogo com o código para o aluno confirmar antes de ir ao porteiro
+                        JPanel painel = new JPanel(new BorderLayout(8, 8));
+                        JLabel lbl = new JLabel("Seu código é:");
+                        JTextField campoCodigo = new JTextField(codigoGerado);
+                        campoCodigo.setEditable(false);
+                        painel.add(lbl, BorderLayout.NORTH);
+                        painel.add(campoCodigo, BorderLayout.CENTER);
+
+                        Object[] options = {"Copiar Código", "Ir ao porteiro", "Cancelar"};
+
+                        int escolha = -1;
+                        while (true) {
+                                escolha = JOptionPane.showOptionDialog(
+                                                this,
+                                                painel,
+                                                "Autorização gerada",
+                                                JOptionPane.DEFAULT_OPTION,
+                                                JOptionPane.INFORMATION_MESSAGE,
+                                                null,
+                                                options,
+                                                options[1]
+                                );
+
+                                if (escolha == 0) { // Copiar Código
+                                        try {
+                                                StringSelection selection = new StringSelection(codigoGerado);
+                                                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+                                                JOptionPane.showMessageDialog(this, "Código copiado para a área de transferência.");
+                                                // continue loop so user can choose to go to porteiro
+                                        } catch (Exception ex) {
+                                                JOptionPane.showMessageDialog(this, "Falha ao copiar o código: " + ex.getMessage());
+                                                break;
+                                        }
+                                } else if (escolha == 1) { // Ir ao porteiro
+                                        TelaPorteiro telaPorteiro = new TelaPorteiro();
+                                        // ocultar a janela do aluno para evitar sobreposição
+                                        this.setVisible(false);
+                                        telaPorteiro.addWindowListener(new java.awt.event.WindowAdapter() {
+                                                @Override
+                                                public void windowClosed(java.awt.event.WindowEvent e) {
+                                                        TelaAluno.this.setVisible(true);
+                                                }
+                                        });
+                                        break;
+                                } else { // Cancelar ou fechar
+                                        break;
+                                }
+                        }
 
         } catch (ValidacaoException erro) {
             JOptionPane.showMessageDialog(this, erro.getMessage());

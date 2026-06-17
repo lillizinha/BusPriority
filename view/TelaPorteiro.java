@@ -7,6 +7,7 @@ import service.SistemaAutorizacoes;
 public class TelaPorteiro extends JFrame {
 
 private JTextField txtCodigo;
+private JTextField txtSenha;
 private JTextArea areaResultado;
 private JButton btnVerificar;
 
@@ -44,6 +45,30 @@ public TelaPorteiro() {
 
         add(txtCodigo);
 
+        JLabel lblSenha =
+                new JLabel("Senha Porteiro:");
+
+        lblSenha.setBounds(
+                20,
+                60,
+                120,
+                25
+        );
+
+        add(lblSenha);
+
+        txtSenha =
+                new JTextField();
+
+        txtSenha.setBounds(
+                140,
+                60,
+                160,
+                25
+        );
+
+        add(txtSenha);
+
         btnVerificar =
                 new JButton("Verificar");
 
@@ -66,9 +91,9 @@ public TelaPorteiro() {
 
         scroll.setBounds(
                 20,
-                80,
+                120,
                 420,
-                130
+                90
         );
 
         add(scroll);
@@ -88,54 +113,71 @@ public TelaPorteiro() {
         setVisible(true);
 }
 
+public void setCodigo(String codigo) {
+        if (codigo == null) return;
+        txtCodigo.setText(codigo);
+}
+
 private void verificarCodigo() {
 
         String codigo =
                 txtCodigo.getText().trim();
+        String senha = txtSenha.getText().trim();
 
-        if(codigo.isEmpty()) {
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Digite um código."
-        );
-
-        return;
+        if (senha.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite a senha do porteiro.");
+            return;
         }
 
-        boolean autorizado =
-                SistemaAutorizacoes
-                        .verificarCodigo(
-                                codigo
-                        );
+        if (!SistemaAutorizacoes.verificarPorteiroSenha(senha)) {
+            JOptionPane.showMessageDialog(this, "Senha do porteiro inválida.");
+            return;
+        }
 
-        if(autorizado) {
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite um código.");
+            return;
+        }
 
-        areaResultado.setText(
+        SistemaAutorizacoes.Resultado resultado = SistemaAutorizacoes.verificarCodigoComMotivo(codigo);
 
-                "===== RESULTADO =====\n\n"
-
-                + "Código: "
-                + codigo
-
-                + "\n\nSTATUS: AUTORIZADO"
-
-                + "\n\nO aluno possui autorização para sair."
-        );
-
-        } else {
-
-        areaResultado.setText(
-
-                "===== RESULTADO =====\n\n"
-
-                + "Código: "
-                + codigo
-
-                + "\n\nSTATUS: NÃO AUTORIZADO"
-
-                + "\n\nCódigo inexistente."
-        );
+        switch (resultado) {
+            case AUTORIZADO:
+                areaResultado.setText(
+                        "RESULTADO DA ANÁLISE\n\n"
+                                + "Código: " + codigo
+                                + "\n\nSTATUS: AUTORIZADO"
+                                + "\n\nO aluno possui autorização para sair.");
+                break;
+            case NAO_EXISTE:
+                areaResultado.setText(
+                        " RESULTADO DA ANÁLISE\n\n"
+                                + "Código: " + codigo
+                                + "\n\nSTATUS: NÃO AUTORIZADO"
+                                + "\n\nCódigo inexistente.");
+                break;
+            case NEGADO_PRIORIDADE:
+                areaResultado.setText(
+                        " RESULTADO DA ANÁLISE\n\n"
+                                + "Código: " + codigo
+                                + "\n\nSTATUS: NÃO AUTORIZADO"
+                                + "\n\nHá pessoas com prioridade maior na fila. Aguarde o horário de saída padrão (16:40).");
+                break;
+            case NEGADO_PROBABILISTICO:
+                areaResultado.setText(
+                        "RESULTADO DA ANÁLISE\n\n"
+                                + "Código: " + codigo
+                                + "\n\nSTATUS: NÃO AUTORIZADO"
+                                + "\n\nA maioria na fila possui prioridade BAIXA. Você deve aguardar até o horário padrão (16:40)."
+                                + "\n\nExiste uma chance muito pequena de autorização; tente novamente mais tarde.");
+                break;
+            default:
+                areaResultado.setText(
+                        "RESULTADO DA ANÁLISE\n\n"
+                                + "Código: " + codigo
+                                + "\n\nSTATUS: NÃO AUTORIZADO"
+                                + "\n\nOperação não permitida.");
+                break;
         }
 }
 }
