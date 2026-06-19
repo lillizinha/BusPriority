@@ -14,9 +14,9 @@ Sistema de gerenciamento de prioridades para embarque em ônibus, com controle d
 
 ### RF2 - Cálculo de Prioridade
 - [x] Classificar passageiros em níveis de prioridade: Alta, Média e Baixa
-- [x] **Prioridade Alta**: Idosos, gestantes, pessoas com deficiência
-- [x] **Prioridade Média**: Alunos com deficiência leve
-- [x] **Prioridade Baixa**: Alunos sem deficiência
+- [x] **Prioridade Alta**: Alunos com urgência a sair
+- [x] **Prioridade Média**: Alunos com leve urgência de sair
+- [x] **Prioridade Baixa**: Alunos sem urgência de sair
 - [x] Aplicar regras de prioridade de forma polimórfica
 
 ### RF3 - Sistema de Autorizações
