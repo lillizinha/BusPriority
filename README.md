@@ -1,6 +1,6 @@
 # BusPriority
 
-Sistema de gerenciamento de prioridades para embarque em ônibus, com controle de autorizações e prioridades diferenciadas por tipo de usuário (aluno, idoso, gestante, etc).
+Sistema de gerenciamento de prioridades para embarque em ônibus, com controle de autorizações e prioridades diferenciadas por tipo de urgência de alunos.
 
 ---
 
